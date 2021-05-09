@@ -4,7 +4,8 @@
       <v-app-bar-nav-icon />
       <v-icon class="mx-2" medium>mdi-movie-open-play</v-icon>
       <v-toolbar-title class="align-center">
-        <span class="title">LetsWatchAMovie</span>
+        <span class="title" v-if="this.$vuetify.theme.dark ==true" style="color:yellow;" >LetsWatchAMovie</span>
+        <span class="title" v-else>LetsWatchAMovie</span>
       </v-toolbar-title>
       <v-spacer />
       <v-text-field
@@ -14,6 +15,9 @@
         single-line
         append-icon="mdi-magnify"
         color="white"
+        label="Movie Name"
+        v-model="searchString"
+        @keypress.enter="searchMovie"
       />
       <v-spacer />
       <v-list>
@@ -21,27 +25,13 @@
           <v-list-item-action>
             <v-switch v-model="theme" color="yellow" />
           </v-list-item-action>
-          <v-list-item-title>Dark Theme</v-list-item-title>
+          <v-list-item-title>Switch to {{themeName}}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-app-bar>
     <v-main>
       <v-container>
-        <v-card class="d-flex align-center mb-6">
-          <v-img
-            class="mx-10"
-            width="40px"
-            :src="`https://cankayacicekcilik.com.tr/images/urun/b_11667829_-beyaz-papatya-kutusu-cicek-siparisi-min.jpg`"
-          />
-          <v-card-subtitle>Subtitle here</v-card-subtitle>
-          <v-card-text> Text here </v-card-text>
-          <v-card-actions>
-            <v-btn color="primary" text>
-              <v-icon class="mx-2"> mdi-movie-open-play </v-icon>
-              Watch
-            </v-btn>
-          </v-card-actions>
-        </v-card>
+        <router-view></router-view>
       </v-container>
     </v-main>
   </v-app>
@@ -50,9 +40,32 @@
 <script>
 export default {
   name: "App",
-
   data: () => ({
     theme: false,
+    searchString: " ",
+    themeName:"Dark",
   }),
+  methods: {
+    searchMovie() {
+      this.$router.push("/SearchMovie/" + this.searchString);
+      this.searchString = "";
+    },
+  },
+  computed: {
+    dataAvailable() {
+      return this.searchString !== null && this.searchString !== "";
+    },
+  },
+  watch:{
+    theme:function(next){
+      this.$vuetify.theme.dark = next
+      if (this.themeName == "Dark") {
+        this.themeName="Light"
+      }
+      else{
+        this.themeName="Dark"
+      }
+    }
+  }
 };
 </script>
